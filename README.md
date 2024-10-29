@@ -1,5 +1,5 @@
-[Alt text](download.png)
-```markdown
+![Alt text](download.png)
+
 # Swap.js - A Modern JavaScript Backend Framework
 
 `Swap.js` is a powerful, lightweight, and modular Node.js framework for backend development. It comes with built-in Dependency Injection, a flexible router with parameter support, middleware integration, and advanced error handling. This framework is designed to simplify server-side application development while offering extensive customization and scalability.
