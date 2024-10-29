@@ -1,4 +1,4 @@
-![Alt text](download.png)
+![Swap.js Banner](download.png)
 
 # Swap.js - A Modern JavaScript Backend Framework
 
