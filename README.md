@@ -22,11 +22,7 @@
 
 ## 1. Installation
 
-To get started with `Swap.js`, install it using npm:
-
-```bash
-npm install swap-js
-```
+for now . swap.js need more extensions so we can upload it on npm and yearn. but you can add the source code files to your project manually
 
 ---
 
