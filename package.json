@@ -1,0 +1,16 @@
+{
+  "name": "swapjs-backend", 
+  "version": "1.0.0",
+  "description": "A lightweight and modular Node.js framework",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "cli": "node src/cli/cli.js"
+  },
+  "bin": {
+    "swap-cli": "src/cli/cli.js"
+  },
+  "keywords": ["nodejs", "framework", "backend"],
+  "author": "Monderador.S",
+  "license": "MIT"
+}
