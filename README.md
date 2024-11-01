@@ -1,4 +1,4 @@
-![Swap.js Banner](download.png)
+![Swap.js Banner](diagram-export-11-1-2024-4_07_03-AM.png)
 
 # Swap.js - A Modern JavaScript Backend Framework
 
