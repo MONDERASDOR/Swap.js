@@ -1,286 +1,163 @@
 ![Swap.js Banner](diagram-export-11-1-2024-4_07_03-AM.png)
 
-# Swap.js - A Modern JavaScript Backend Framework
+# Swap.js
 
-`Swap.js` is a powerful, lightweight, and modular Node.js framework for backend development. It comes with built-in Dependency Injection, a flexible router with parameter support, middleware integration, and advanced error handling. This framework is designed to simplify server-side application development while offering extensive customization and scalability.
-
----
+Swap.js is a powerful and modern backend framework for Node.js, designed to offer a lightweight, efficient, and developer-friendly experience. With modular architecture, dependency injection, and middleware management, it allows you to create scalable backend applications with ease.
 
 ## Table of Contents
-1. [Installation](#installation)
-2. [Quick Start](#quick-start)
-3. [Project Structure](#project-structure)
-4. [Creating Controllers](#creating-controllers)
-5. [Using Dependency Injection](#using-dependency-injection)
-6. [Advanced Routing](#advanced-routing)
-7. [Middleware Management](#middleware-management)
-8. [Error Handling](#error-handling)
-9. [CLI Usage](#cli-usage)
-10. [Configuration](#configuration)
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start Guide](#quick-start-guide)
+- [Core Concepts](#core-concepts)
+  - [App](#app)
+  - [Router](#router)
+  - [Controllers](#controllers)
+  - [Middleware](#middleware)
+- [Example Project Structure](#example-project-structure)
+- [License](#license)
 
----
+## Features
 
-## 1. Installation
+- **Lightweight and Fast**: Designed for speed and simplicity.
+- **Modular Architecture**: Easily manage application modules.
+- **Dependency Injection**: Simplified management of services and dependencies.
+- **Middleware Support**: Customize requests with ease.
+- **Routing Decorators**: Use decorators like `@Get` and `@Post` for expressive routes.
 
-for now . swap.js need more extensions so we can upload it on npm and yearn. but you can add the source code files to your project manually
+## Installation
 
----
-
-## 2. Quick Start
-
-Start by creating a simple server using `Swap.js`:
-
-```javascript
-// index.js
-const App = require('swap-js').App;
-const { Controller, Get } = require('swap-js').decorators;
-
-@Controller('/api')
-class MyController {
-  @Get('/greet')
-  greet(req, res) {
-    res.end('Hello from Swap.js!');
-  }
-}
-
-const app = new App();
-app.registerController(MyController);
-
-app.listen(3000, () => {
-  console.log('Swap.js server running on http://localhost:3000');
-});
-```
-
-Run the server:
+To install Swap.js, ensure you have Node.js installed, then run:
 
 ```bash
-node index.js
+npm install swapjs-backend
 ```
 
-Visit [http://localhost:3000/api/greet](http://localhost:3000/api/greet) to see the response!
+## Quick Start Guide
 
----
+Here’s a basic example of how to set up a simple Swap.js server:
 
-## 3. Project Structure
+1. **Initialize the Application**
 
-A standard `Swap.js` project structure looks like this:
+   ```javascript
+   const Swap = require('swapjs-backend');
+   const app = new Swap.App();
 
-```plaintext
-my-swap-app/
+   app.listen(3000, () => {
+       console.log("Server running on port 3000");
+   });
+   ```
+
+2. **Create a Controller**
+
+   Controllers define routes for your application. Here’s an example of a simple controller that responds to a GET request:
+
+   ```javascript
+   const { Controller, Get } = require('swapjs-backend').decorators;
+
+   @Controller('/api')
+   class ExampleController {
+       @Get('/hello')
+       helloWorld(req, res) {
+           res.send({ message: 'Hello, world!' });
+       }
+   }
+
+   module.exports = ExampleController;
+   ```
+
+3. **Register the Controller in the App**
+
+   To make the controller active, register it with your app in the main file.
+
+   ```javascript
+   const ExampleController = require('./controllers/ExampleController');
+   app.registerController(ExampleController);
+   ```
+
+4. **Run the Server**
+
+   ```bash
+   node index.js
+   ```
+
+   Visit [http://localhost:3000/api/hello](http://localhost:3000/api/hello) to see your first Swap.js response!
+
+## Core Concepts
+
+### App
+
+The **App** class is the central part of Swap.js. It initializes and configures the server, registers routes, and handles incoming requests.
+
+```javascript
+const app = new Swap.App();
+app.listen(3000, () => console.log('Server running on port 3000'));
+```
+
+### Router
+
+The **Router** manages routes and provides path definitions. You can define routes using decorators within controllers.
+
+### Controllers
+
+Controllers are classes that manage specific routes in your application. Define routes using decorators like `@Controller` for class-level routes and `@Get`, `@Post`, etc., for method-level routes.
+
+Example:
+```javascript
+const { Controller, Get } = require('swapjs-backend').decorators;
+
+@Controller('/api')
+class SampleController {
+    @Get('/status')
+    getStatus(req, res) {
+        res.json({ status: 'active' });
+    }
+}
+
+module.exports = SampleController;
+```
+
+### Middleware
+
+Middleware functions intercept requests and can be used for logging, authentication, or modifying requests and responses.
+
+```javascript
+const authMiddleware = (req, res, next) => {
+    if (req.headers.authorization) {
+        next();
+    } else {
+        res.status(403).send('Unauthorized');
+    }
+};
+app.useMiddleware(authMiddleware);
+```
+
+## Example Project Structure
+
+Here’s an example of a project structure for Swap.js:
+
+```
+project-root/
+│
 ├── src/
 │   ├── controllers/
-│   │   └── MyController.js
+│   │   └── ExampleController.js
 │   ├── middlewares/
 │   │   └── authMiddleware.js
-│   ├── index.js
+│   ├── services/
+│   │   └── ExampleService.js
+│   ├── core/
+│   │   ├── App.js
+│   │   ├── Router.js
+│   │   └── Middleware.js
+│   └── index.js
+│
 ├── package.json
 └── README.md
 ```
 
-This structure helps keep controllers and middlewares modular and organized.
-
----
-
-## 4. Creating Controllers
-
-Controllers in `Swap.js` handle route logic. Use decorators like `@Controller` and `@Get` for cleaner code:
-
-```javascript
-// src/controllers/UserController.js
-const { Controller, Get, Post } = require('swap-js').decorators;
-
-@Controller('/users')
-class UserController {
-  @Get('/:id')
-  getUser(req, res) {
-    res.end(`User ID: ${req.params.id}`);
-  }
-
-  @Post('/')
-  createUser(req, res) {
-    res.end('User created!');
-  }
-}
-
-module.exports = UserController;
-```
-
----
-
-## 5. Using Dependency Injection
-
-`Swap.js` includes a DI container for managing dependencies across classes, which improves testability and modularity.
-
-1. **Create a Service**:
-
-    ```javascript
-    // src/services/UserService.js
-    const { Injectable } = require('swap-js').decorators;
-
-    @Injectable()
-    class UserService {
-      getUsers() {
-        return ['Alice', 'Bob', 'Charlie'];
-      }
-    }
-
-    module.exports = UserService;
-    ```
-
-2. **Inject the Service into a Controller**:
-
-    ```javascript
-    // src/controllers/UserController.js
-    const { Controller, Get } = require('swap-js').decorators;
-    const UserService = require('../services/UserService');
-
-    @Controller('/users')
-    class UserController {
-      constructor(userService = new UserService()) {
-        this.userService = userService;
-      }
-
-      @Get('/')
-      listUsers(req, res) {
-        res.end(JSON.stringify(this.userService.getUsers()));
-      }
-    }
-
-    module.exports = UserController;
-    ```
-
----
-
-## 6. Advanced Routing
-
-`Swap.js` supports dynamic route parameters and nested routes for advanced routing needs.
-
-```javascript
-// src/controllers/ProductController.js
-const { Controller, Get } = require('swap-js').decorators;
-
-@Controller('/products')
-class ProductController {
-  @Get('/:id')
-  getProduct(req, res) {
-    res.end(`Product ID: ${req.params.id}`);
-  }
-
-  @Get('/:id/reviews')
-  getProductReviews(req, res) {
-    res.end(`Reviews for Product ID: ${req.params.id}`);
-  }
-}
-
-module.exports = ProductController;
-```
-
----
-
-## 7. Middleware Management
-
-Middleware functions in `Swap.js` allow preprocessing of requests or responses. 
-
-1. **Create Middleware**:
-
-    ```javascript
-    // src/middlewares/authMiddleware.js
-    function authMiddleware(req, res, next) {
-      if (!req.headers.authorization) {
-        res.statusCode = 401;
-        return res.end('Unauthorized');
-      }
-      next();
-    }
-
-    module.exports = authMiddleware;
-    ```
-
-2. **Register Middleware**:
-
-    ```javascript
-    // index.js
-    const authMiddleware = require('./src/middlewares/authMiddleware');
-    app.use(authMiddleware);
-    ```
-
----
-
-## 8. Error Handling
-
-`Swap.js` provides a global error handler for structured error responses.
-
-```javascript
-// src/middlewares/errorHandler.js
-function errorHandler(err, req, res) {
-  console.error(`[ERROR]: ${err.message}`);
-  res.statusCode = err.statusCode || 500;
-  res.end(JSON.stringify({ error: err.message }));
-}
-
-module.exports = errorHandler;
-```
-
-Register it in your app to handle errors gracefully.
-
----
-
-## 9. CLI Usage
-
-The `Swap.js` CLI (`swap-cli`) simplifies project scaffolding. Run the following command to create a new project:
-
-```bash
-npx swap-cli new my-swap-project
-```
-
-This command generates a project structure with a basic server setup in the specified directory.
-
----
-
-## 10. Configuration
-
-Manage application configuration via the `config` folder.
-
-1. **Default Configuration**:
-
-    ```javascript
-    // src/config/default.js
-    module.exports = {
-      server: {
-        port: process.env.PORT || 3000
-      },
-      logging: {
-        level: 'info'
-      }
-    };
-    ```
-
-2. **Using Configuration in the App**:
-
-    ```javascript
-    // src/core/app.js
-    const config = require('./config/default');
-
-    class App {
-      constructor() {
-        this.port = config.server.port;
-      }
-
-      // Additional methods...
-    }
-    ```
-
----
-
 ## License
 
-Swap.js is open-source software licensed under the MIT license.
+This project is licensed under the MIT License.
+ 
 
----
-
-With `Swap.js`, you get a modular, configurable, and scalable backend framework that is easy to set up and customize for any project.
-```
-
----
-
-This README introduces `Swap.js`, covers essential and advanced features, and includes example code for each step, making it easy to get started with the framework.
+ # NuggetsTeam
